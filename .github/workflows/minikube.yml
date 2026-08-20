@@ -1,0 +1,39 @@
+name: Kubernetes Minikube CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  minikube:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start Minikube
+        uses: medyagh/setup-minikube@latest
+
+      - name: Check Kubernetes cluster
+        run: kubectl get nodes
+
+      - name: Deploy application
+        run: kubectl apply -f deployment.yaml
+
+      - name: Create service
+        run: kubectl apply -f service.yaml
+
+      - name: Check deployments
+        run: kubectl get deployments
+
+      - name: Check pods
+        run: kubectl get pods
+
+      - name: Check services
+        run: kubectl get services
+
+      - name: Verify deployment
+        run: kubectl rollout status deployment/nginx-deployment
